@@ -1,0 +1,15 @@
+name : binaire_pair
+init : q0
+accept : qA
+
+q0, 0
+q0, 0, >
+
+q0, 1
+q0, 1, >
+
+q0, _
+q1, _, <
+
+q1, 0
+qA, 0, -

@@ -1,0 +1,15 @@
+name : 7.3.1
+init : q0
+accept : qF
+
+q0, a, _
+q0, a, b, >, >
+
+q0, _, _
+qajout, _, _, -, <
+
+qajout, _, b
+qajout, b, _, >, <
+
+qajout, _, _
+qF, _, _, <, <

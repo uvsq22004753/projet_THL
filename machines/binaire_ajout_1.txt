@@ -1,0 +1,21 @@
+name : binaire_ajout_1
+init : q0
+accept : qA
+
+q0, 1
+q0, 1, >
+
+q0, 0
+q0, 0, >
+
+q0, _
+qaj, _, <
+
+qaj, 0
+qA, 1, -
+
+qaj, 1
+qaj, 0, <
+
+qaj, _
+qA, 1, -

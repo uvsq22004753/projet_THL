@@ -1,0 +1,12 @@
+name : LEFTi
+init : q0
+accept : qF
+
+q0, 1
+q0, 1, <
+
+q0, 0
+q0, 0, <
+
+q0, _
+qF, _, >

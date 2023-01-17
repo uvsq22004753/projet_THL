@@ -1,0 +1,57 @@
+name : 7.0.6
+init : q0
+accept : qF
+
+q0, a
+qA, a, >
+
+q0, b
+qB, b, >
+
+q0, _
+qF, _, -
+
+qA, a
+qA, a, >
+
+qA, b
+qA, b, >
+
+qB, a
+qB, a, >
+
+qB, b
+qB, b, >
+
+qA, _
+qAtest, _,<
+
+qB, _
+qBtest, _, <
+
+qAtest, b
+qF, b, -
+
+qBtest, a
+qF, a, -
+
+qAtest, a
+qret, _, <
+
+qBtest, b
+qret, _, <
+
+qret,a
+qret, a, <
+
+qret, b
+qret, b, <
+
+qret, _
+qsup, _, >
+
+qsup, a
+qF, _, -
+
+qsup, b
+qF, _, -

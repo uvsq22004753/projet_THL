@@ -1,0 +1,18 @@
+name : 7.1.1
+init : qp
+accept : qF
+
+qp, 1
+qi, 1, >
+
+qp, 0
+qp, 0, >
+
+qi, 0
+qi, 0, >
+
+qi, 1
+qp, 1, >
+
+qp, _
+qF, _, -

@@ -1,0 +1,133 @@
+version 1 ruban : 
+
+name: 7.3.1
+init: q0
+accept: qF
+
+q0, a 
+qtest, *, >
+
+qtest, a
+qtest, a, >
+
+qtest, b
+qret, $, <
+
+qtest, $
+qtest, $, >
+
+qret, $
+qret, $, <
+
+qret, a
+qret, a, <
+
+qret, *
+q0, *, >
+
+q0, $
+qtestb, $, >
+
+qtestb, $
+qtestb, $, >
+
+qtestb, c
+qc, c, <
+
+qc, $
+qc, $, <
+
+qc, *
+q01, *, >
+
+q01, $
+qtest2, b, >
+
+qtest2, $
+qtest2, $, >
+
+qtest2, c
+qret2, !, <
+
+qtest2, !
+qtest2, !, >
+
+qret2, !
+qret2, !, <
+
+qret2, $
+qret2, $, <
+
+qret2, b
+q01, b, >
+
+q01, !
+qtestc, !, >
+
+qtestc, !
+qtestc, !, >
+
+qtestc, _
+qF, _, -
+
+version 2 rubans : 
+
+name: 7.3.1 - 2 rubans
+init: q0
+accept: qF
+
+q0, a, _
+q0, a, _, >, >
+
+q0, b, _
+q0, b, _, >, -
+
+q0, c, _
+q0, c, _, >, -
+
+q0, _, _
+qCopy, _, _, <, -
+
+qCopy, c, _
+qCopy, _, c, <, <
+
+qCopy, b, _
+qCopy, b, _, <, -
+
+qCopy, a, _
+qCopy, a, _, <, <
+
+qCopy, _, _
+q1, _, _, >, >
+
+
+
+q1, a, _
+qtest, * , _ ,>, >
+
+qtest, a, _
+qtest, a, _ , >, >
+
+qtest, b, c
+qret, $, c ,<,<
+
+qtest, $, c
+qtest, $, c, >, >
+
+qret, $, c
+qret, $, c, <,<
+
+qret, a, _
+qret, a, _,<, <
+
+qret, *, _
+q1, *,_, >, >
+
+q1, $, c
+qtestfinal, $,c,>, >
+
+qtestfinal, $, c
+qtestfinal, $, c, >, >
+
+qtestfinal, _, _
+qF, _,_, -, -

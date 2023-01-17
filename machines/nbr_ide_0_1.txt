@@ -1,0 +1,33 @@
+name : 7.1.2
+init : q0
+accept : qF
+
+q0, 0
+qtest, *, >
+
+qtest, 0
+qtest, 0, >
+
+qtest, 1
+qret, $, <
+
+qtest, $
+qtest, $, >
+
+qret, $
+qret, $, <
+
+qret, 0
+qret, 0, <
+
+qret, *
+q0, *, >
+
+q0, $
+qtestfinal, $, >
+
+qtestfinal, $
+qtestfinal, $, >
+
+qtestfinal, _
+qF, _, -

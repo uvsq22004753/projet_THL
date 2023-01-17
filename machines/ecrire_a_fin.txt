@@ -1,0 +1,12 @@
+name : 7.0.1
+init : q0
+accept : qA
+
+q0, a
+q0, a, >
+
+q0, b
+q0, b, >
+
+q0, _
+qA, a , -

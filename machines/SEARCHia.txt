@@ -1,0 +1,9 @@
+name : SEARCHia
+init: q0
+accept: qF
+
+q0, a
+qF, a, -
+
+q0, b
+q0, b, >
