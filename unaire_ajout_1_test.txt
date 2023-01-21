@@ -1,0 +1,14 @@
+name : unaire_ajout_1
+init : q0
+accept : F
+
+q0, 1
+q0, 1, <
+
+q0, _
+qA, 1, -
+
+qA, 1
+F, ERASEi
+
+
