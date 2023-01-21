@@ -1,4 +1,8 @@
 #PROJET MT SIMULATOR 
+
+#PARTIE 1
+
+
 import sys
 from colorama import Fore, Style
 import copy
@@ -137,6 +141,22 @@ class MT(object):
                     co[i][j] = Fore.BLUE + Style.BRIGHT + co[i][j] + Fore.RESET + Style.RESET_ALL
             print(', '.join(co[i]))
         print('\n')
+        
+        
+    def sous_forme_fichier(self):
+        """écrit dans un fichier texte une machine turing"""
+        
+        f = open("machines/"+self.nom+".txt", "w")
+        f.write("name : "+self.nom)
+        f.write("\ninit : "+self.init)
+        f.write("\naccept : "+self.accept)
+        
+        for i in range(0,len(self.instr),2): 
+
+                f.write('\n'+', '.join(self.instr[i])+'\n')
+                f.write(', '.join(self.instr[i+1])+'\n')
+                
+        f.close()
 
         
     
@@ -215,12 +235,12 @@ def simulation(fichier_MT, mot):
      
         
    
-print('choisir une machine de turing : ') #enumeration des fichiers dans 
-for elem in os.listdir('./machines'):     #machines
-    print(elem)
-choix = input("choix (sans le .txt) : ")
-mot = input("rentrer un mot : ")
-simulation('machines/'+ choix + '.txt', mot)
+#print('choisir une machine de turing : ') #enumeration des fichiers dans 
+#for elem in os.listdir('./machines'):     #machines
+#    print(elem)
+#choix = input("choix (sans le .txt) : ")
+#mot = input("rentrer un mot : ")
+#simulation('machines/'+ choix + '.txt', mot)
 
 # question 5 test des machines
 #simulation('machines/LEFTi.txt', '111001')
@@ -229,4 +249,208 @@ simulation('machines/'+ choix + '.txt', mot)
 #simulation('machines/COPYij.txt', '111001')
 
 
+# PARTIE 2
+
+# on appelle de fonction apparait de cette façon dans un fichier .txt de M1 : 
+    # q1, a
+    # q2, M2
     
+    #q1, a, _   cas où il y a plusieurs rubans
+    #q1, M2, _
+    
+def simulation_appel(M1, M2):
+    """ fonction qui simule un linker. On prend des machines faisant parties /
+    de la classe MT -- pas dans l'énoncé mais une aide pour moi """
+    
+    
+    while meme_etat(M1, M2):     #on change le nom des etats entre les deux machines 
+        M2 = changer_nom_etat(M2)
+    
+    appel = False
+    situation = [M1, appel]
+    
+    while M1.courant != M1.accept: 
+        
+        if not appel :     # dans le cas où on a une instruction qui n'appelle pas de machine
+            situation = pas_a_pas_appel(M1, M2.nom)
+            M1 = situation[0]
+            appel = situation[1]
+        
+        else:  #dans le cas où on a une instruction qui utilise une autre machine
+            for rubann in situation[2]:
+                M2.rubans[rubann-1] = M1.rubans[rubann-1] # la machine doit reprendre là où l'on s'est arrêté
+                M2.tete[rubann-1] = M1.tete[rubann-1]
+                
+                M1.courant = situation[3][0]  # l'état courant doit être mis à jour
+            
+            while M2.courant != M2.accept:  #on effectue les étapes de M2 et on met à jour M1 au fur et à mesure 
+                M2 = pas_a_pas(M2)
+                for rubann in situation[2]:
+                    M1.rubans[rubann-1] = M2.rubans[rubann-1]
+                    M1.tete[rubann-1] = M2.tete[rubann-1]
+    
+    M1.affichage()
+    
+    
+def linker(M1, M2):
+    """ fonction qui simule un linker. On prend des machines faisant parties /
+    de la classe MT -- marche pour même  nombre de rubans -- on oublie pas /
+    que l'on se place dans l'alphabet binaire"""
+    
+    Mres = MT('linker_'+M1.nom, M1.init, M1.accept, [], len(M1.rubans))
+    
+    while meme_etat(M1, M2):     #on change le nom des etats entre les deux machines 
+        M2 = changer_nom_etat(M2)
+    
+    for i in range(0,len(M1.instr),2):
+        appel = appel_existe(M1.instr[i+1], M2.nom)
+        if len(appel) == 0:  # cas où on ne tombe pas sur un appel de machine
+            
+            Mres.instr += [M1.instr[i]]
+            Mres.instr += [M1.instr[i+1]]
+            
+        else :  #cas où on tombe sur un appel de machine
+            if len(M2.rubans) == len(M1.rubans): # si même nombre de ruban
+                
+                co = copy.deepcopy(M2.instr)
+                for j in range(0,len(M2.instr),2):
+                    if  co[j][0] == M2.init:
+                        co[j][0] = M1.instr[i][0]
+                    
+                    if  co[j+1][0] == M2.init:
+                        co[j+1][0] = M1.instr[i][0]
+                
+                    if  co[j+1][0] == M2.accept:
+                        co[j+1][0] = M1.instr[i+1][0]
+                
+                    Mres.instr += [co[j]]
+                    Mres.instr += [co[j+1]]
+            
+            else:
+                for j in range(0, len(M2.instr), 2): #sinon
+                    
+                    for alphabet in ['1','0','_']:
+                
+                        base_lire = [ alphabet for i in range(len(M1.rubans)+1)]
+                        base_ecrire = [alphabet for i in range(len(M1.rubans)+1)] + ['-' for i in range(len(M1.rubans))]
+                    
+                        base_lire[0] = M2.instr[j][0]
+                        base_ecrire[0] = M2.instr[j+1][0]
+                    
+                        if  M2.instr[j][0] == M2.init:
+                            base_lire[0] = M1.instr[i][0]
+                    
+                        if  M2.instr[j+1][0] == M2.init:
+                            base_ecrire[0] = M1.instr[i][0]
+                
+                        if  M2.instr[j+1][0] == M2.accept:
+                            base_ecrire[0] = M1.instr[i+1][0]
+                    
+                        pos_instr_M2 = 1
+                    
+                        for k in range(1,len(base_lire)):
+                            for l in appel:
+                            
+                                if k == l :
+                                    base_lire[k] = M2.instr[j][pos_instr_M2]
+
+                                    base_ecrire[k] = M2.instr[j+1][pos_instr_M2]
+                                    base_ecrire[k+len(M1.rubans)] = M2.instr[j+1][pos_instr_M2+len(M2.rubans)]
+                                
+                                    pos_instr_M2 += 1
+                                
+                                Mres.instr += [base_lire]
+                                Mres.instr += [base_ecrire]
+            
+    Mres.sous_forme_fichier()
+    return(Mres)
+            
+    
+def meme_etat(M1, M2):
+    """fonction qui verifie si deux machines ont bien des noms d'états/
+    différents"""
+    
+    etat_M1 = [elem[0] for elem in M1.instr]
+    etat_M2 = [elem[0] for elem in M2.instr if elem[0] not in etat_M1]
+    
+    if len(etat_M2) == 0:
+        return True
+    return False
+    
+    
+
+def changer_nom_etat(machine):
+    """fonction qui rajoute P au nom de chaque etat pour les différencier /
+    des états d'une autre machine"""
+    
+    for elem in machine.instr :
+        elem[0] = elem[0]+'P'
+    
+    machine.courant = machine.courant + 'P'
+    machine.init = machine.init + 'P'
+    machine.accept = machine.accept + 'P'
+    
+    return machine
+
+
+
+
+def appel_existe(liste, nom):
+    """fonction qui vérifie si l'instruction appelle l'autre machine /
+    de turing et si oui renvoie l'indice à lequel on l'appel"""
+    
+    res = []
+    for i in range(len(liste)):
+        if liste[i] == nom:
+            res += [i]
+    return res
+
+
+    
+def pas_a_pas_appel(machine, nom):
+    """amélioration de pas à pas pour des machines qui appellent /
+    d'autres machines - marche pour même nombre de rubans"""
+    
+    etat = [machine.courant]
+    tetes = machine.tete
+    choix_instr = machine.instr
+    nbr_ruban = len(tetes)
+    
+    for i in range(nbr_ruban):                # on lit chaque tete sur chaque ruban
+        etat.append(machine.lire(i, tetes[i]))
+    
+    instruction = []                           # on cherche l'instruction soeur que l'on doit effectuer
+    for i in range(0,len(choix_instr),2):
+        if egalite(choix_instr[i],etat):
+            instruction = choix_instr[i+1]
+    
+    ou = appel_existe(instruction, nom)
+    
+    if len(ou) != 0:
+        return [machine, True, ou, instruction]
+        
+    if instruction == []:
+        sys.exit("la machine ne reconnait pas le mot")
+    machine.courant = instruction[0]
+    
+    for i in range(nbr_ruban):
+            machine.ecrire(i, tetes[i], instruction[i+1])
+            tetes[i] = machine.bouger(i, tetes[i], instruction[i+1+nbr_ruban])
+    
+    machine.affichage()
+    return [machine, False]
+
+M1 = initialise_MT('./machines/envers_2rubans_test.txt', '')
+M2 = initialise_MT('./machines/LEFTi.txt','')
+linker(M1,M2)
+simulation('machines/linker_envers.txt','1000')
+
+M3 = initialise_MT('./machines/envers_2rubans_test1.txt', '')
+M4 = initialise_MT('./machines/ERASEi.txt','')
+linker(M3,M4)
+simulation('machines/linker_envers.txt','1000')
+
+M5 = initialise_MT('./machines/1_par_0_test.txt', '')
+M6 = initialise_MT('./machines/LEFTi.txt','')
+linker(M5,M6)
+simulation('machines/linker_7.0.3.txt','1000')  
